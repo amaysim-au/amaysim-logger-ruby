@@ -65,7 +65,7 @@ class AmaysimLogger
     RequestStore[:log_append] || {}
   end
 
-  # rubocop:disable Matrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
   def log_with_duration(log_params:, log_with:, execute:)
     start_time = Time.now
     log_params[:start_time] = log_timestamp(start_time)
