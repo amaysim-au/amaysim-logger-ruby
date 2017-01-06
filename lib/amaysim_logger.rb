@@ -42,13 +42,10 @@ class AmaysimLogger
     def log(msg:, params: {}, log_with:, execute: nil)
       log_params = create_log_params(msg, params)
       if execute
-        return log_with_duration(
-          log_params: log_params,
-          log_with: log_with,
-          execute: execute
-        )
+        log_with_duration(log_params, log_with, execute)
+      else
+        log_with.call(format_params(log_params))
       end
-      log_with.call(format_params(log_params))
     end
 
     private
@@ -67,7 +64,7 @@ class AmaysimLogger
     end
 
     # rubocop:disable Metrics/MethodLength
-    def log_with_duration(log_params:, log_with:, execute:)
+    def log_with_duration(log_params, log_with, execute)
       start_time = Time.now
       log_params[:start_time] = log_timestamp(start_time)
       return execute.call
