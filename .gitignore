@@ -1,0 +1,12 @@
+# OSX
+.DS_Store
+
+# Bundler related files
+.bundle
+/vendor/bundle
+
+# Test coverage report
+coverage
+
+# Dependencies version tolerance
+Gemfile.lock

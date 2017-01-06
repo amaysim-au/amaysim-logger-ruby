@@ -1,0 +1,23 @@
+require: rubocop-rspec
+
+Metrics/LineLength:
+  Max: 95
+Style/Documentation:
+  Enabled: false
+RSpec/NestedGroups:
+  MaxNesting: 4
+Rails/HttpPositionalArguments:
+  Enabled: false
+
+# Rails exceptions
+AllCops:
+  Include:
+    - '**/Rakefile'
+    - '**/config.ru'
+  Exclude:
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'script/**/*'
+    - 'bin/**/*'
+    - 'vendor/**/*'
+    - 'spec/spec_helper.rb'
