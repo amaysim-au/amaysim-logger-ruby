@@ -3,28 +3,15 @@ require 'request_store'
 
 class AmaysimLogger
   class << self
-    def info(msg:, params: {}, execute: nil)
-      log(msg: msg, params: params,
-          log_with: ->(log_msg) { logger.info(log_msg) },
-          execute: execute)
-    end
-
-    def debug(msg:, params: {}, execute: nil)
-      log(msg: msg, params: params,
-          log_with: ->(log_msg) { logger.debug(log_msg) },
-          execute: execute)
-    end
-
-    def warn(msg:, params: {}, execute: nil)
-      log(msg: msg, params: params,
-          log_with: ->(log_msg) { logger.warn(log_msg) },
-          execute: execute)
-    end
-
-    def error(msg:, params: {}, execute: nil)
-      log(msg: msg, params: params,
-          log_with: ->(log_msg) { logger.error(log_msg) },
-          execute: execute)
+    [:info, :debug, :warn, :error].each do |level|
+      define_method(level) do |msg:, params: {}, execute: nil|
+        log(
+          msg: msg,
+          params: params,
+          log_with: ->(log_msg) { logger.send(level, log_msg) },
+          execute: execute
+        )
+      end
     end
 
     def append_to_log(params = {})
