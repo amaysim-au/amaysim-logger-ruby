@@ -54,7 +54,7 @@ class AmaysimLogger
     def log_with_duration(log_params, log_with, execute)
       start_time = Time.now
       log_params[:start_time] = log_timestamp(start_time)
-      return execute.call
+      execute.call
     rescue StandardError => e
       log_params[:exception] = e.class
       log_params[:exception_msg] = e
