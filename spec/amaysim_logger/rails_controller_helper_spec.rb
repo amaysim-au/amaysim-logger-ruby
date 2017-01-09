@@ -1,11 +1,11 @@
 require 'amaysim_logger/rails_controller_helper'
+require 'action_controller'
 
 # rubocop:disable RSpec/MessageSpies
 # rubocop:disable RSpec/VerifiedDoubles
 class AmaysimLogger
-  class TestController
+  class TestController < ActionController::Base
     include RailsControllerHelper
-    attr_accessor :request
   end
 
   RSpec.describe RailsControllerHelper do

@@ -10,24 +10,24 @@ RSpec.describe AmaysimLogger do
   let(:log_timestamp) { start_time }
   before do
     Timecop.freeze(start_time)
-    RequestStore.store[:log_append] = nil
+    described_class.log_context = nil
   end
 
-  describe '.append_to_log' do
-    context 'when RequestStore[:log_append] is not a hash' do
-      it 'sets RequestStore[:log_append] as-is' do
+  describe '.add_to_log_context' do
+    context 'when AmaysimLogger.log_context is not a hash' do
+      it 'sets AmaysimLogger.log_context as-is' do
         foo = Object.new
-        RequestStore[:log_append] = :whatever
-        described_class.append_to_log(foo)
-        expect(RequestStore[:log_append]).to eq(foo)
+        described_class.log_context = :whatever
+        described_class.add_to_log_context(foo)
+        expect(described_class.log_context).to eq(foo)
       end
     end
 
-    context 'when RequestStore[:log_append] is a hash' do
-      it 'merges the given hash into RequestStore[:log_append]' do
-        RequestStore[:log_append] = { foo: :bar }
-        described_class.append_to_log(bar: :baz)
-        expect(RequestStore[:log_append]).to eq(foo: :bar, bar: :baz)
+    context 'when AmaysimLogger.log_context is a hash' do
+      it 'merges the given hash into AmaysimLogger.log_context' do
+        described_class.log_context = { foo: :bar }
+        described_class.add_to_log_context(bar: :baz)
+        expect(described_class.log_context).to eq(foo: :bar, bar: :baz)
       end
     end
   end
@@ -110,7 +110,7 @@ RSpec.describe AmaysimLogger do
           msg: 'my_message',
           log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
           start_time: '2016-01-22 15:46:22 +1100 AEDT',
-          exception: 'RuntimeError',
+          exception: RuntimeError,
           exception_msg: 'stinky things happen',
           end_time: '2016-01-22 15:46:32 +1100 AEDT',
           duration: 10.0
@@ -124,7 +124,7 @@ RSpec.describe AmaysimLogger do
         end)
       end
 
-      it 'logs start_log_msg on exception' do
+      it 'logs end_log_msg on exception' do
         expect(logger).to receive(:info).with end_log_msg
         begin
           stinky_thing
@@ -153,10 +153,10 @@ RSpec.describe AmaysimLogger do
       }.to_json
     end
     before do
-      RequestStore.store[:log_append] = {}
+      RequestStore.store[:log_context] = {}
       [:msn, :session_token, :request_id, :ip, :endpoint,
        :client_id, :phone_id].each do |k|
-        RequestStore.store[:log_append][k] = 'log this'
+        RequestStore.store[:log_context][k] = 'log this'
       end
     end
 

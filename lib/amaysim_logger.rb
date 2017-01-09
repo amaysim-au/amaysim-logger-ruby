@@ -14,12 +14,20 @@ class AmaysimLogger
       end
     end
 
-    def append_to_log(params = {})
-      if RequestStore[:log_append].is_a?(Hash)
-        RequestStore[:log_append] = RequestStore[:log_append].merge(params)
-      else
-        RequestStore[:log_append] = params
-      end
+    def add_to_log_context(params = {})
+      self.log_context = if log_context.is_a?(Hash)
+                           log_context.merge(params)
+                         else
+                           params
+                         end
+    end
+
+    def log_context
+      RequestStore[:log_context] ||= {}
+    end
+
+    def log_context=(context)
+      RequestStore[:log_context] = context
     end
 
     def logger
@@ -43,11 +51,7 @@ class AmaysimLogger
 
     def create_log_params(msg, params)
       timestamped_message = { msg: msg, log_timestamp: log_timestamp }
-      timestamped_message.merge(request_params).merge(params)
-    end
-
-    def request_params
-      RequestStore[:log_append] || {}
+      timestamped_message.merge(log_context).merge(params)
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -67,6 +71,7 @@ class AmaysimLogger
     end
 
     def format_params(params)
+      puts params.to_json
       params.to_json
     end
   end
