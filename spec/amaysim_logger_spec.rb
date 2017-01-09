@@ -33,7 +33,12 @@ RSpec.describe AmaysimLogger do
   end
 
   context 'without a block' do
-    let(:log_msg) { 'msg=my_message, log_timestamp=2016-01-22 15:46:22 +1100 AEDT' }
+    let(:log_msg) do
+      {
+        msg: 'my_message',
+        log_timestamp: '2016-01-22 15:46:22 +1100 AEDT'
+      }.to_json
+    end
 
     it 'logs info messages' do
       expect(logger).to receive(:info).with log_msg
@@ -58,12 +63,20 @@ RSpec.describe AmaysimLogger do
 
   describe 'with a block' do
     let(:start_log_msg) do
-      'msg=my_message, log_timestamp=2016-01-22 15:46:22 +1100 AEDT, start_time=' \
-      '2016-01-22 15:46:22 +1100 AEDT'
+      {
+        msg: 'my_message',
+        log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
+        start_time: '2016-01-22 15:46:22 +1100 AEDT'
+      }.to_json
     end
     let(:end_log_msg) do
-      'msg=my_message, log_timestamp=2016-01-22 15:46:22 +1100 AEDT, start_time=' \
-      '2016-01-22 15:46:22 +1100 AEDT, end_time=2016-01-22 15:46:32 +1100 AEDT, duration=10.0'
+      {
+        msg: 'my_message',
+        log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
+        start_time: '2016-01-22 15:46:22 +1100 AEDT',
+        end_time: '2016-01-22 15:46:32 +1100 AEDT',
+        duration: 10.0
+      }.to_json
     end
     let(:block_return_msg) { 'return me as result' }
 
@@ -93,9 +106,15 @@ RSpec.describe AmaysimLogger do
 
     context 'with exception' do
       let(:end_log_msg) do
-        'msg=my_message, log_timestamp=2016-01-22 15:46:22 +1100 AEDT, start_time=' \
-        '2016-01-22 15:46:22 +1100 AEDT, exception=RuntimeError, exception_msg=sti' \
-        'nky things happen, end_time=2016-01-22 15:46:32 +1100 AEDT, duration=10.0'
+        {
+          msg: 'my_message',
+          log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
+          start_time: '2016-01-22 15:46:22 +1100 AEDT',
+          exception: 'RuntimeError',
+          exception_msg: 'stinky things happen',
+          end_time: '2016-01-22 15:46:32 +1100 AEDT',
+          duration: 10.0
+        }.to_json
       end
 
       let(:stinky_thing) do
@@ -121,9 +140,17 @@ RSpec.describe AmaysimLogger do
 
   describe 'include specific params from the request' do
     let(:log_msg) do
-      'msg=my_message, log_timestamp=2016-01-22 15:46:22 +1100 AEDT, ' \
-        'msn=log this, session_token=log this, request_id=log th' \
-        'is, ip=log this, endpoint=log this, client_id=log this, phone_id=log this'
+      {
+        msg: 'my_message',
+        log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
+        msn: 'log this',
+        session_token: 'log this',
+        request_id: 'log this',
+        ip: 'log this',
+        endpoint: 'log this',
+        client_id: 'log this',
+        phone_id: 'log this'
+      }.to_json
     end
     before do
       RequestStore.store[:log_append] = {}

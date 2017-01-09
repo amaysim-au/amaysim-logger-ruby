@@ -67,7 +67,7 @@ class AmaysimLogger
     end
 
     def format_params(params)
-      params.map { |k, v| "#{k}=#{v}" }.join(', ')
+      params.to_json
     end
   end
 end
