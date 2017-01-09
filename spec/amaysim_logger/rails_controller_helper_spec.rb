@@ -25,11 +25,29 @@ class AmaysimLogger
     end
 
     describe '#log_request' do
-      it 'logs the details of the http request as debug' do
-        # rubocop:disable Metrics/LineLength
-        log = "msg=log_request, log_timestamp=#{start_time}, request_id=uuid, ip=1.2.3.4, user_agent=Chrome, endpoint=http://amaysim.com.au, start_time=#{start_time}, end_time=#{end_time}, duration=10.0"
-        expect(logger).to receive(:debug).with(log)
-        controller.log_request { Timecop.freeze(DateTime.parse(end_time)) }
+      context 'when correlation-id not provided by HTTP header' do
+        before do
+          allow(SecureRandom).to receive(:uuid).and_return('generated-uuid')
+        end
+
+        it 'logs the details of the http request as debug with a generated correlation id' do
+          # rubocop:disable Metrics/LineLength
+          log = "msg=log_request, log_timestamp=#{start_time}, request_id=uuid, ip=1.2.3.4, user_agent=Chrome, endpoint=http://amaysim.com.au, correlation_id=generated-uuid, start_time=#{start_time}, end_time=#{end_time}, duration=10.0"
+          expect(logger).to receive(:debug).with(log)
+          controller.log_request { Timecop.freeze(DateTime.parse(end_time)) }
+        end
+      end
+
+      context 'when correlation-id provided by HTTP header' do
+        before do
+          allow(request).to receive(:headers).and_return('HTTP_USER_AGENT' => 'Chrome', 'CORRELATION-ID' => 'provided-uuid')
+        end
+
+        it 'logs the details of the http request as debug with the provided correlation id' do
+          log = "msg=log_request, log_timestamp=#{start_time}, request_id=uuid, ip=1.2.3.4, user_agent=Chrome, endpoint=http://amaysim.com.au, correlation_id=provided-uuid, start_time=#{start_time}, end_time=#{end_time}, duration=10.0"
+          expect(logger).to receive(:debug).with(log)
+          controller.log_request { Timecop.freeze(DateTime.parse(end_time)) }
+        end
       end
     end
   end
