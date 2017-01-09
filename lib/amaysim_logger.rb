@@ -15,11 +15,9 @@ class AmaysimLogger
     end
 
     def add_to_log_context(params = {})
-      self.log_context = if log_context.is_a?(Hash)
-                           log_context.merge(params)
-                         else
-                           params
-                         end
+      context_is_a_hash = log_context.is_a?(Hash)
+      new_params = log_context.merge(params) if context_is_a_hash
+      self.log_context = context_is_a_hash ? new_params : params
     end
 
     def log_context
@@ -71,7 +69,6 @@ class AmaysimLogger
     end
 
     def format_params(params)
-      puts params.to_json
       params.to_json
     end
   end
