@@ -13,6 +13,14 @@ RSpec.describe AmaysimLogger do
     described_class.log_context = nil
   end
 
+  describe 'info, debug, warn, error' do
+    it 'works with a non hash input as an argument as well' do
+      expected = '{"msg":"my_message","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT"}'
+      expect(logger).to receive(:info).with(expected)
+      described_class.info('my_message')
+    end
+  end
+
   describe '.add_to_log_context' do
     context 'when AmaysimLogger.log_context is not a hash' do
       it 'sets AmaysimLogger.log_context as-is' do
@@ -149,10 +157,9 @@ RSpec.describe AmaysimLogger do
       }.to_json
     end
     before do
-      RequestStore.store[:log_context] = {}
       [:msn, :session_token, :request_id, :ip, :endpoint,
        :client_id, :phone_id].each do |k|
-        RequestStore.store[:log_context][k] = 'log this'
+        described_class.log_context[k] = 'log this'
       end
     end
 

@@ -3,20 +3,20 @@ require 'request_store'
 
 class AmaysimLogger
   class << self
-    def info(msg:, params: {})
-      log(msg, params, :info, block_given? ? -> {yield} : nil)
+    def info(msg, _progname = nil)
+      log(msg, :info, block_given? ? -> { yield } : nil)
     end
 
-    def debug(msg:, params: {})
-      log(msg, params, :debug, block_given? ? -> {yield} : nil)
+    def debug(msg, _progname = nil)
+      log(msg, :debug, block_given? ? -> { yield } : nil)
     end
 
-    def warn(msg:, params: {})
-      log(msg, params, :warn, block_given? ? -> {yield} : nil)
+    def warn(msg, _progname = nil)
+      log(msg, :warn, block_given? ? -> { yield } : nil)
     end
 
-    def error(msg:, params: {})
-      log(msg, params, :error, block_given? ? -> {yield} : nil)
+    def error(msg, _progname = nil)
+      log(msg, :error, block_given? ? -> { yield } : nil)
     end
 
     def add_to_log_context(params = {})
@@ -39,13 +39,22 @@ class AmaysimLogger
 
     private
 
-    def log(msg, params, log_level, execute)
+    def log(log_msg, log_level, execute)
+      msg, params = msg_and_attributes(log_msg)
       log_params = create_log_params(msg, params)
-      log_with = ->(log_msg) { logger.send(log_level, log_msg) }
+      log_with = ->(log_content) { logger.send(log_level, log_content) }
       if execute
         log_with_duration(log_params, log_with, execute)
       else
         log_with.call(format_params(log_params))
+      end
+    end
+
+    def msg_and_attributes(log_msg)
+      if log_msg.is_a?(Hash)
+        [log_msg.delete(:msg), log_msg]
+      else
+        [log_msg.to_s, {}]
       end
     end
 
