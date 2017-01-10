@@ -13,11 +13,11 @@ RSpec.describe AmaysimLogger do
     described_class.log_context = nil
   end
 
-  describe 'info, debug, warn, error' do
+  describe 'info, debug, warn, error, unknown' do
     it 'works with a non hash input as an argument as well' do
       expected = '{"msg":"my_message","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT"}'
-      expect(logger).to receive(:info).with(expected)
-      described_class.info('my_message')
+      expect(logger).to receive(:unknown).with(expected)
+      described_class.unknown('my_message')
     end
   end
 

@@ -19,6 +19,10 @@ class AmaysimLogger
       log(msg, :error, block_given? ? -> { yield } : nil)
     end
 
+    def unknown(msg, _progname = nil)
+      log(msg, :unknown, block_given? ? -> { yield } : nil)
+    end
+
     def add_to_log_context(params = {})
       context_is_a_hash = log_context.is_a?(Hash)
       new_params = log_context.merge(params) if context_is_a_hash
