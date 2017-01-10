@@ -8,6 +8,15 @@ RSpec.describe AmaysimLogger do
   let(:start_time) { DateTime.parse('2016-01-22 15:46:22 +1100') }
   let(:end_time) { DateTime.parse('2016-01-22 15:46:32 +1100') }
   let(:log_timestamp) { start_time }
+  let(:multiple_lines_message) do
+    <<-XML
+<root>
+  <element>first line</element>
+  <element>second line</element>
+  <element>thrid line</element>
+</root>
+    XML
+  end
   before do
     Timecop.freeze(start_time)
     described_class.log_context = nil
@@ -18,6 +27,13 @@ RSpec.describe AmaysimLogger do
       expected = '{"msg":"my_message","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT"}'
       expect(logger).to receive(:unknown).with(expected)
       described_class.unknown('my_message')
+    end
+
+    it 'works with a multiple lines string' do
+      # rubocop:disable Metrics/LineLength
+      expected = '{"msg":"\u003croot\u003e\n  \u003celement\u003efirst line\u003c/element\u003e\n  \u003celement\u003esecond line\u003c/element\u003e\n  \u003celement\u003ethrid line\u003c/element\u003e\n\u003c/root\u003e\n","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT"}'
+      expect(logger).to receive(:warn).with(expected)
+      described_class.warn(multiple_lines_message)
     end
   end
 
