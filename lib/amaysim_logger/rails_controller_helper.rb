@@ -17,9 +17,7 @@ class AmaysimLogger
                          user_agent: request.headers['HTTP_USER_AGENT'],
                          endpoint: request.url,
                          correlation_id: correlation_id)
-      AmaysimLogger.debug(msg: 'log_request', execute: lambda do
-        yield
-      end)
+      AmaysimLogger.debug(msg: 'log_request') { yield }
     end
 
     delegate :add_to_log_context, to: AmaysimLogger

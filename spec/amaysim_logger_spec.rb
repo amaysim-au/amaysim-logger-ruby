@@ -86,9 +86,7 @@ RSpec.describe AmaysimLogger do
 
     context 'without exception' do
       after do
-        described_class.info(msg: 'my_message', execute: lambda do
-          Timecop.freeze(end_time)
-        end)
+        described_class.info(msg: 'my_message') { Timecop.freeze(end_time) }
       end
 
       it 'logs the end time and duration' do
@@ -97,9 +95,7 @@ RSpec.describe AmaysimLogger do
 
       it 'returns the block return' do
         expect(
-          described_class.info(msg: 'my_message', execute: lambda do
-            block_return_msg
-          end)
+          described_class.info(msg: 'my_message') { block_return_msg }
         ).to eq block_return_msg
       end
     end
@@ -118,10 +114,10 @@ RSpec.describe AmaysimLogger do
       end
 
       let(:stinky_thing) do
-        described_class.info(msg: 'my_message', execute: lambda do
+        described_class.info(msg: 'my_message') do
           Timecop.freeze(end_time)
           raise 'stinky things happen'
-        end)
+        end
       end
 
       it 'logs end_log_msg on exception' do
