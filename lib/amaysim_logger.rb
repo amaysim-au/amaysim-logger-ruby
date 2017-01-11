@@ -1,25 +1,26 @@
 require 'active_support/logger'
+require 'active_support/core_ext/module/delegation'
 require 'request_store'
 
 class AmaysimLogger
   class << self
-    def info(msg, _progname = nil)
+    def info(msg = nil, _progname = nil)
       log(msg, :info, block_given? ? -> { yield } : nil)
     end
 
-    def debug(msg, _progname = nil)
+    def debug(msg = nil, _progname = nil)
       log(msg, :debug, block_given? ? -> { yield } : nil)
     end
 
-    def warn(msg, _progname = nil)
+    def warn(msg = nil, _progname = nil)
       log(msg, :warn, block_given? ? -> { yield } : nil)
     end
 
-    def error(msg, _progname = nil)
+    def error(msg = nil, _progname = nil)
       log(msg, :error, block_given? ? -> { yield } : nil)
     end
 
-    def unknown(msg, _progname = nil)
+    def unknown(msg = nil, _progname = nil)
       log(msg, :unknown, block_given? ? -> { yield } : nil)
     end
 
@@ -40,6 +41,10 @@ class AmaysimLogger
     def logger
       @logger ||= ActiveSupport::Logger.new(STDOUT)
     end
+
+    delegate :level, :level=, to: :logger
+    delegate :formatter, :formatter=, to: :logger
+    delegate :info?, :debug?, :warn?, :error?, :unknown?, to: :logger
 
     private
 
