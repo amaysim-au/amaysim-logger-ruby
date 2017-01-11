@@ -1,5 +1,6 @@
 require 'active_support/logger'
 require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/time/zones'
 require 'request_store'
 
 class AmaysimLogger
@@ -68,6 +69,7 @@ class AmaysimLogger
     end
 
     def log_timestamp(time = Time.now)
+      time = time.in_time_zone('Sydney')
       "#{time} #{time.zone}"
     end
 
