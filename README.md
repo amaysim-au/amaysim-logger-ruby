@@ -6,7 +6,7 @@ To have a gem that can be used across different ruby based applications and achi
 ## Usage
 1. Add to `Gemfile`:
 ```
-gem 'amaysim-logger', git: git@github.com:amaysim-au/amaysim-logger.git
+gem 'amaysim-logger', git: git@github.com:amaysim-au/amaysim-logger-ruby.git
 ```
 2. Run `bundle install`
 3. In the application:
