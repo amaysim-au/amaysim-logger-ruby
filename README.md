@@ -6,12 +6,12 @@ To have a gem that can be used across different ruby based applications and achi
 ## Usage
 1. Add to `Gemfile`:
 ```
-gem 'amaysim-logger', git: git@github.com:amaysim-au/amaysim-logger-ruby.git
+gem 'amaysim-logger', git: 'git@github.com:amaysim-au/amaysim-logger-ruby.git'
 ```
 2. Run `bundle install`
 3. In the application:
 ```ruby
-require 'amaysim-logger`
+require 'amaysim_logger'
 
 AmaysimLogger.info('foo') # .info, .debug, .warn, .error, .unknown
 # {"msg":"foo","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT"}
@@ -32,6 +32,8 @@ There is a rails helper that gives controllers the ability to log each requests.
 First you need to add this line into a rails initializer:
 
 ```ruby
+# /config/initializers/amaysim_logger.rb
+require 'amaysim_logger'
 Rails.logger = AmaysimLogger
 ```
 
