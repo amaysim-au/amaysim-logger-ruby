@@ -28,6 +28,7 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency 'activesupport'
   gem.add_runtime_dependency 'request_store', '~> 1.3'
+  gem.add_runtime_dependency 'lograge', '~> 0.4.1'
 
   gem.add_development_dependency 'actionpack'
   gem.add_development_dependency 'bundler', '~> 1.13'
