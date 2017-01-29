@@ -1,15 +1,18 @@
-# `amaysim-logger` gem
+# `amaysim_logger` gem
 
 ## Purpose
 To have a gem that can be used across different ruby based applications and achieve a consistent way of logging application events.
 
 ## Usage
 1. Add to `Gemfile`:
+
 ```
-gem 'amaysim-logger', git: 'git@github.com:amaysim-au/amaysim-logger-ruby.git'
+gem 'amaysim_logger', git: 'git@github.com:amaysim-au/amaysim-logger-ruby.git'
 ```
+
 2. Run `bundle install`
 3. In the application:
+
 ```ruby
 require 'amaysim_logger'
 

@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'amaysim_logger/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = 'amaysim-logger'
+  gem.name          = 'amaysim_logger'
   gem.version       = AmaysimLogger::VERSION
   gem.authors       = ['Daniel Deng']
   gem.email         = ['daniel.deng@amaysim.com.au']
