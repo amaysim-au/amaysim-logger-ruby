@@ -16,6 +16,14 @@ class AmaysimLogger
           exception_backtrace: e.backtrace.join("\n")
         }
       end
+
+      def message_hash(msg)
+        if msg.is_a? Hash
+          msg
+        else
+          { msg: msg }
+        end
+      end
     end
   end
 end

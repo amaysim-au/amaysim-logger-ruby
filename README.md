@@ -69,3 +69,7 @@ AmaysimLogger.warn(msg: 'baz',  other: :attribute) { raise StandardError, "Ooops
 ## Rails
 
 It should Just Work:tm:.
+
+## Correlation ID
+Correlation ID is automatically generated if `Correlation-Id` header is not set.
+Otherwise the correlation id provided in the HTTP header will be used.

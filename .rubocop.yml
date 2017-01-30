@@ -9,6 +9,9 @@ RSpec/NestedGroups:
 Rails/HttpPositionalArguments:
   Enabled: false
 
+RSpec/ExampleLength:
+  Enabled: false
+
 # Rails exceptions
 AllCops:
   Include:

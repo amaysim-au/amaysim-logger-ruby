@@ -1,12 +1,7 @@
 require 'timecop'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.shared_examples 'logging' do |level_method, level|
-  class TestException < StandardError
-    def backtrace
-      %w(line1 line2 line3)
-    end
-  end
-
   let(:output) { StringIO.new }
   let(:logger) { AmaysimLogger::Logger.new(output) }
 
@@ -84,12 +79,15 @@ RSpec.shared_examples 'logging' do |level_method, level|
       )
     end
 
+    # rubocop:disable Lint/HandleExceptions
     it "logs a logs an exeption from within a block #{level} level" do
-      expect do
+      begin
         logger.send(level_method, msg: 'something', other: 'foobar') do
           raise TestException, 'Oh no'
         end
-      end.to raise_error(TestException)
+      rescue
+        # noop
+      end
 
       expect(log_json).to eq(
         'duration' => 0.0,
@@ -103,6 +101,14 @@ RSpec.shared_examples 'logging' do |level_method, level|
         'msg' => 'something',
         'other' => 'foobar'
       )
+    end
+
+    it "reraises the exeption from within a block #{level} level" do
+      expect do
+        logger.send(level_method, msg: 'something', other: 'foobar') do
+          raise TestException, 'Oh no'
+        end
+      end.to raise_error(TestException)
     end
   end
 end

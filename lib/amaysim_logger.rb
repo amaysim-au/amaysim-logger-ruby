@@ -13,7 +13,8 @@ class AmaysimLogger
     end
 
     delegate :info, :debug, :warn, :error, :unknown, :log_context,
-             :log_context=, :add_to_log_context, to: :logger
+             :log_context=, :add_to_log_context, :formatter, :formatter=,
+             :level, :level=, to: :logger
   end
 end
 
