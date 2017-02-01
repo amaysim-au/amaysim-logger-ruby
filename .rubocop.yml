@@ -8,6 +8,8 @@ RSpec/NestedGroups:
   Max: 4
 Rails/HttpPositionalArguments:
   Enabled: false
+Metrics/BlockLength:
+  Enabled: false
 
 # Rails exceptions
 AllCops:

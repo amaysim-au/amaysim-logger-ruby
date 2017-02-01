@@ -1,5 +1,7 @@
 require 'active_support/logger'
 require 'active_support/core_ext/module/delegation'
+require 'json'
+require 'active_support/core_ext/time/conversions'
 require 'active_support/core_ext/time/zones'
 require 'request_store'
 
@@ -99,3 +101,5 @@ class AmaysimLogger
     end
   end
 end
+
+require 'amaysim_logger/railtie' if defined? Rails
