@@ -5,8 +5,10 @@ Metrics/LineLength:
 Style/Documentation:
   Enabled: false
 RSpec/NestedGroups:
-  MaxNesting: 4
+  Max: 4
 Rails/HttpPositionalArguments:
+  Enabled: false
+Metrics/BlockLength:
   Enabled: false
 
 # Rails exceptions
