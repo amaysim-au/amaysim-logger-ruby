@@ -48,26 +48,38 @@ class AmaysimLogger
     delegate :level, :level=, to: :logger
     delegate :formatter, :formatter=, to: :logger
     delegate :info?, :debug?, :warn?, :error?, :unknown?, to: :logger
+    delegate :<<, to: :logger
 
     private
 
     def log(log_msg, log_level, execute)
-      msg, params = msg_and_attributes(log_msg)
-      log_params = create_log_params(msg, params)
+      log_params = prepare_log_params(log_msg, log_level)
       log_with = ->(log_content) { logger.send(log_level, log_content) }
-      if execute
+      if log_msg.nil? && execute
+        log_params[:msg] = execute.call
+        log_with.call(format_params(log_params))
+      elsif execute
         log_with_duration(log_params, log_with, execute)
       else
         log_with.call(format_params(log_params))
       end
     end
 
-    def msg_and_attributes(log_msg)
-      if log_msg.is_a?(Hash)
-        [log_msg.delete(:msg), log_msg]
-      else
-        [log_msg.to_s, {}]
+    def prepare_log_params(log_msg, log_level)
+      return create_hash_log_params(log_msg, log_level) if log_msg.is_a?(Hash)
+      create_log_params(log_msg.to_s, {}, log_level)
+    end
+
+    def create_hash_log_params(log_msg, log_level)
+      if log_msg.key?(:exception)
+        e = log_msg[:exception]
+        log_msg.delete(:exception)
+        log_msg[:exception_class] = e.class.name
+        log_msg[:exception_message] = e.message
+        log_msg[:exception_backtrace] = e.backtrace.join('\n')
       end
+
+      create_log_params(log_msg.delete(:msg), log_msg, log_level)
     end
 
     def log_timestamp(time = Time.now)
@@ -75,8 +87,8 @@ class AmaysimLogger
       "#{time} #{time.zone}"
     end
 
-    def create_log_params(msg, params)
-      timestamped_message = { msg: msg, log_timestamp: log_timestamp }
+    def create_log_params(msg, params, log_level)
+      timestamped_message = { msg: msg, log_timestamp: log_timestamp, log_level: log_level }
       timestamped_message.merge(log_context).merge(params)
     end
 
@@ -86,8 +98,8 @@ class AmaysimLogger
       log_params[:start_time] = log_timestamp(start_time)
       execute.call
     rescue StandardError => e
-      log_params[:exception] = e.class
-      log_params[:exception_msg] = e
+      log_params[:exception_class] = e.class.name
+      log_params[:exception_message] = e.message
       raise e
     ensure
       end_time = Time.now

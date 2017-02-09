@@ -35,6 +35,7 @@ class AmaysimLogger
           log = {
             msg: 'log_request',
             log_timestamp: start_time,
+            log_level: 'debug',
             request_id: 'uuid',
             ip: '1.2.3.4',
             user_agent: 'Chrome',
@@ -61,6 +62,7 @@ class AmaysimLogger
           log = {
             msg: 'log_request',
             log_timestamp: start_time,
+            log_level: 'debug',
             request_id: 'uuid',
             ip: '1.2.3.4',
             user_agent: 'Chrome',

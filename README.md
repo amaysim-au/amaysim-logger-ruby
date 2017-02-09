@@ -10,39 +10,55 @@ achieve a consistent way of logging application events.
 ```
 gem 'amaysim_logger', git: 'git@github.com:amaysim-au/amaysim-logger-ruby.git'
 ```
+2. Add a logger initialiser to config/initialiser
 
-2. Run `bundle install`
-3. In the application:
+```
+Rails.logger = AmaysimLogger
+```
 
-```ruby
-require 'amaysim_logger'
+Note: Its a good idea to wrap this in an env var to allow developers to use traditional logs locally:
 
-AmaysimLogger.info('foo') # .info, .debug, .warn, .error, .unknown
+```
+unless ENV['DISABLE_AMAYSIM_LOGGER'] == 'true'
+  Rails.logger = AmaysimLogger
+end
+```
+
+3. Run `bundle install`
+4. In the application log as per usual wirh Rails.logger
+
+```
+
+Rails.logger.info('foo') # .info, .debug, .warn, .error, .unknown
 # {
 #   "log_timestamp": "2017-02-01 12:43:08 +1100 AEDT",
-#   "msg": "foo"
+#   "msg": "foo",
+#   "log_level": "info"
 # }
 
-AmaysimLogger.info(msg: 'foo')
+Rails.logger.info(msg: 'foo')
 # {
 #   "log_timestamp": "2017-02-01 12:43:42 +1100 AEDT",
-#   "msg": "foo"
+#   "msg": "foo",
+#   "log_level": "info"
 # }
 
-AmaysimLogger.debug(msg: 'bar', other: :attribute)
+Rails.logger.debug(msg: 'bar', other: :attribute)
 # {
 #   "log_timestamp": "2017-02-01 12:44:15 +1100 AEDT",
 #   "msg": "bar",
+#   "log_level": "info",
 #   "other": "attribute"
 # }
 
 # if a block is given, the log will automatically include start and end time with duration.
-AmaysimLogger.warn(msg: 'baz', other: :attribute) { sleep 1.45 }
+Rails.logger.warn(msg: 'baz', other: :attribute) { sleep 1.45 }
 # {
 #   "duration": 1.45457,
 #   "end_time": "2017-02-01 12:45:02 +1100 AEDT",
 #   "log_timestamp": "2017-02-01 12:45:00 +1100 AEDT",
 #   "msg": "baz",
+#   "log_level": "info",
 #   "other": "attribute",
 #   "start_time": "2017-02-01 12:45:00 +1100 AEDT"
 # }
@@ -62,6 +78,7 @@ You automatically get logs for each request on each action:
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:37:59 +1100 AEDT",
   "msg": "log_request",
+  "log_level": "info",
   "request_id": "04780cc0-fead-448d-907a-381089eb221b",
   "start_time": "2017-02-01 12:37:59 +1100 AEDT",
   "user_agent": "Mozilla/5.0"
@@ -93,7 +110,8 @@ Then you will have log entries like this:
   "foo": "bar",
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:47:08 +1100 AEDT",
-  "msg": "foo",
+  "msg": "foo",,
+  "log_level": "info",
   "request_id": "6a2a792b-4a96-4179-adf2-106c1028df7c",
   "user_agent": "Mozilla/5.0"
 }
@@ -104,7 +122,8 @@ Then you will have log entries like this:
   "foo": "bar",
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:47:08 +1100 AEDT",
-  "msg": null,
+  "msg": null,,
+  "log_level": "info",
   "request_id": "6a2a792b-4a96-4179-adf2-106c1028df7c",
   "user_agent": "Mozilla/5.0"
 }
@@ -117,6 +136,7 @@ Then you will have log entries like this:
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:47:08 +1100 AEDT",
   "msg": "log_request",
+  "log_level": "info",
   "request_id": "6a2a792b-4a96-4179-adf2-106c1028df7c",
   "start_time": "2017-02-01 12:47:08 +1100 AEDT",
   "user_agent": "Mozilla/5.0"
@@ -129,6 +149,7 @@ Then you will have log entries like this:
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:47:08 +1100 AEDT",
   "msg": "log_request",
+  "log_level": "info",
   "request_id": "6a2a792b-4a96-4179-adf2-106c1028df7c",
   "start_time": "2017-02-01 12:47:08 +1100 AEDT",
   "user_agent": "Mozilla/5.0"
@@ -160,3 +181,5 @@ end
 ## Correlation ID
 Correlation ID is automatically generated if `Correlation-ID` header is not set.
 Otherwise the correlation id provided in the HTTP header will be used.
+
+Please ensure the correlation id is passed to downstream systems so we can link a request through multiple microservices

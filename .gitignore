@@ -10,3 +10,10 @@ coverage
 
 # Dependencies version tolerance
 Gemfile.lock
+
+# Ignore Byebug command history file.
+.byebug_history
+
+# Ignore all local files
+.idea/
+.DS_Store
