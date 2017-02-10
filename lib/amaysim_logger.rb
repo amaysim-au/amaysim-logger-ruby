@@ -27,6 +27,10 @@ class AmaysimLogger
       log(msg, :unknown, block_given? ? -> { yield } : nil)
     end
 
+    define_method(:<<) do |block|
+      log(nil, :info, -> { block })
+    end
+
     def add_to_log_context(params = {})
       context_is_a_hash = log_context.is_a?(Hash)
       new_params = log_context.merge(params) if context_is_a_hash
@@ -48,7 +52,6 @@ class AmaysimLogger
     delegate :level, :level=, to: :logger
     delegate :formatter, :formatter=, to: :logger
     delegate :info?, :debug?, :warn?, :error?, :unknown?, to: :logger
-    delegate :<<, to: :logger
 
     private
 

@@ -99,6 +99,14 @@ RSpec.describe AmaysimLogger do
         described_class.error msg: message
       end
     end
+
+    describe '#<<' do
+      let(:log_level) { 'info' }
+      it 'logs info message' do
+        expect(logger).to receive(:info).with log_msg
+        described_class << message
+      end
+    end
   end
 
   describe 'with a block' do
