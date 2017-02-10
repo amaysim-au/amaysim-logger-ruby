@@ -43,6 +43,16 @@ Rails.logger.info(msg: 'foo')
 #   "log_level": "info"
 # }
 
+Rails.logger.error(msg: 'foo', exception: e)
+# {
+#   "log_timestamp": "2017-02-01 12:43:42 +1100 AEDT",
+#   "msg": "foo",
+#   "log_level": "info"
+#   "exception_message": "some exception message",
+#   "exception_class": "SomeException",
+#   "exception_backtrace": "<backtrace line separated>"
+# }
+
 Rails.logger.debug(msg: 'bar', other: :attribute)
 # {
 #   "log_timestamp": "2017-02-01 12:44:15 +1100 AEDT",
@@ -183,3 +193,8 @@ Correlation ID is automatically generated if `Correlation-ID` header is not set.
 Otherwise the correlation id provided in the HTTP header will be used.
 
 Please ensure the correlation id is passed to downstream systems so we can link a request through multiple microservices
+
+```
+Header key: "Correlation-ID"
+Header value: eg. "568652a8-2d54-4540-940d-ca48836ec70f"
+```

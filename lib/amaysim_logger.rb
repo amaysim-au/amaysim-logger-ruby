@@ -74,8 +74,7 @@ class AmaysimLogger
       if log_msg.key?(:exception)
         e = log_msg[:exception]
         log_msg.delete(:exception)
-        log_msg[:exception_class] = e.class.name
-        log_msg[:exception_message] = e.message
+        log_exception(e, log_msg)
         log_msg[:exception_backtrace] = e.backtrace.join('\n')
       end
 
@@ -98,14 +97,19 @@ class AmaysimLogger
       log_params[:start_time] = log_timestamp(start_time)
       execute.call
     rescue StandardError => e
-      log_params[:exception_class] = e.class.name
-      log_params[:exception_message] = e.message
+      log_exception(e, log_params)
       raise e
     ensure
       end_time = Time.now
       log_params[:end_time] = log_timestamp(end_time)
       log_params[:duration] = (end_time - start_time)
       log_with.call(format_params(log_params))
+    end
+
+    def log_exception(e, log_params)
+      log_params[:msg] = e.message unless log_params.key?(:msg)
+      log_params[:exception_class] = e.class.name
+      log_params[:exception_message] = e.message
     end
 
     def format_params(params)

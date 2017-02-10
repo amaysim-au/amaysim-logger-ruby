@@ -4,8 +4,7 @@ require 'request_store'
 
 # rubocop:disable RSpec/MessageSpies
 RSpec.describe AmaysimLogger do
-  TIMESTAMP = '2016-01-22 15:46:22 +1100 AEDT'.freeze
-
+  let(:timestamp) { '2016-01-22 15:46:22 +1100 AEDT' }
   let(:logger) { described_class.logger }
   let(:start_time) { DateTime.parse('2016-01-22 15:46:22 +1100') }
   let(:end_time) { DateTime.parse('2016-01-22 15:46:32 +1100') }
@@ -28,7 +27,7 @@ RSpec.describe AmaysimLogger do
 
   describe 'info, debug, warn, error, unknown' do
     it 'works with a non hash input as an argument as well' do
-      expected = %({"msg":"#{message}","log_timestamp":"#{TIMESTAMP}","log_level":"unknown"})
+      expected = %({"msg":"#{message}","log_timestamp":"#{timestamp}","log_level":"unknown"})
       expect(logger).to receive(:unknown).with(expected)
       described_class.unknown(message)
     end
@@ -64,7 +63,7 @@ RSpec.describe AmaysimLogger do
     let(:log_msg) do
       {
         msg: message,
-        log_timestamp: TIMESTAMP,
+        log_timestamp: timestamp,
         log_level: log_level
       }.to_json
     end
@@ -106,17 +105,17 @@ RSpec.describe AmaysimLogger do
     let(:start_log_msg) do
       {
         msg: message,
-        log_timestamp: TIMESTAMP,
+        log_timestamp: timestamp,
         log_level: log_level,
-        start_time: TIMESTAMP
+        start_time: timestamp
       }.to_json
     end
     let(:end_log_msg) do
       {
         msg: message,
-        log_timestamp: TIMESTAMP,
+        log_timestamp: timestamp,
         log_level: log_level,
-        start_time: TIMESTAMP,
+        start_time: timestamp,
         end_time: '2016-01-22 15:46:32 +1100 AEDT',
         duration: 10.0
       }.to_json
@@ -147,9 +146,9 @@ RSpec.describe AmaysimLogger do
       let(:end_log_msg) do
         {
           msg: message,
-          log_timestamp: TIMESTAMP,
+          log_timestamp: timestamp,
           log_level: log_level,
-          start_time: TIMESTAMP,
+          start_time: timestamp,
           exception_class: 'RuntimeError',
           exception_message: 'stinky things happen',
           end_time: '2016-01-22 15:46:32 +1100 AEDT',
@@ -180,9 +179,9 @@ RSpec.describe AmaysimLogger do
     context 'with no params' do
       let(:message) { 'hello' }
 
-      it 'logs the end time and duration' do
-        expect(logger).to receive(:info).with '{"msg":"hello","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info"}'
-        described_class.info { 'hello' }
+      it 'logs the block result for Rails.logger.info { block }' do
+        expect(logger).to receive(:info).with %({"msg":"#{message}","log_timestamp":"#{timestamp}","log_level":"info"})
+        described_class.info { message }
       end
     end
   end
@@ -191,7 +190,7 @@ RSpec.describe AmaysimLogger do
     let(:log_msg) do
       {
         msg: message,
-        log_timestamp: TIMESTAMP,
+        log_timestamp: timestamp,
         log_level: log_level,
         msn: 'log this',
         session_token: 'log this',
@@ -228,20 +227,40 @@ RSpec.describe AmaysimLogger do
       allow(exception).to receive(:message).and_return(exception_message)
     end
 
-    let(:log_msg) do
-      {
-        msg: msg,
-        log_timestamp: TIMESTAMP,
-        log_level: 'error',
-        exception_class: exception_class,
-        exception_message: exception_message,
-        exception_backtrace: exception_backtrace.join('\n')
-      }.to_json
+    context 'with msg' do
+      let(:log_msg) do
+        {
+          msg: msg,
+          log_timestamp: timestamp,
+          log_level: 'error',
+          exception_class: exception_class,
+          exception_message: exception_message,
+          exception_backtrace: exception_backtrace.join('\n')
+        }.to_json
+      end
+
+      it 'logs error details for exceptions' do
+        expect(logger).to receive(:error).with(log_msg)
+        described_class.error msg: msg, exception: exception
+      end
     end
 
-    it 'logs error details for exceptions' do
-      expect(logger).to receive(:error).with(log_msg)
-      described_class.error msg: msg, exception: exception
+    context 'override null msg' do
+      let(:log_msg) do
+        {
+          msg: exception_message,
+          log_timestamp: timestamp,
+          log_level: 'error',
+          exception_class: exception_class,
+          exception_message: exception_message,
+          exception_backtrace: exception_backtrace.join('\n')
+        }.to_json
+      end
+
+      it 'logs error details for exceptions' do
+        expect(logger).to receive(:error).with(log_msg)
+        described_class.error exception: exception
+      end
     end
   end
 end
