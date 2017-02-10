@@ -18,6 +18,8 @@ class AmaysimLogger
     config.active_record.logger = AmaysimLogger if defined? ActiveRecord
     config.active_job.logger = AmaysimLogger if defined? ActiveJob
 
+    config.logger = config.amaysim_logger
+
     config.after_initialize do |_app|
       ActiveSupport::LogSubscriber.log_subscribers.each do |subscriber|
         case subscriber.class.to_s

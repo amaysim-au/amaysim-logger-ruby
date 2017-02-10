@@ -4,10 +4,13 @@ require 'request_store'
 
 # rubocop:disable RSpec/MessageSpies
 RSpec.describe AmaysimLogger do
+  let(:timestamp) { '2016-01-22 15:46:22 +1100 AEDT' }
   let(:logger) { described_class.logger }
   let(:start_time) { DateTime.parse('2016-01-22 15:46:22 +1100') }
   let(:end_time) { DateTime.parse('2016-01-22 15:46:32 +1100') }
   let(:log_timestamp) { start_time }
+  let(:message) { 'my_message' }
+  let(:log_level) { 'info' }
   let(:multiple_lines_message) do
     <<-XML
 <root>
@@ -24,14 +27,14 @@ RSpec.describe AmaysimLogger do
 
   describe 'info, debug, warn, error, unknown' do
     it 'works with a non hash input as an argument as well' do
-      expected = '{"msg":"my_message","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT"}'
+      expected = %({"msg":"#{message}","log_timestamp":"#{timestamp}","log_level":"unknown"})
       expect(logger).to receive(:unknown).with(expected)
-      described_class.unknown('my_message')
+      described_class.unknown(message)
     end
 
     it 'works with a multiple lines string' do
       # rubocop:disable Metrics/LineLength
-      expected = '{"msg":"\u003croot\u003e\n  \u003celement\u003efirst line\u003c/element\u003e\n  \u003celement\u003esecond line\u003c/element\u003e\n  \u003celement\u003ethrid line\u003c/element\u003e\n\u003c/root\u003e\n","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT"}'
+      expected = '{"msg":"\u003croot\u003e\n  \u003celement\u003efirst line\u003c/element\u003e\n  \u003celement\u003esecond line\u003c/element\u003e\n  \u003celement\u003ethrid line\u003c/element\u003e\n\u003c/root\u003e\n","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"warn"}'
       expect(logger).to receive(:warn).with(expected)
       described_class.warn(multiple_lines_message)
     end
@@ -59,45 +62,68 @@ RSpec.describe AmaysimLogger do
   context 'without a block' do
     let(:log_msg) do
       {
-        msg: 'my_message',
-        log_timestamp: '2016-01-22 15:46:22 +1100 AEDT'
+        msg: message,
+        log_timestamp: timestamp,
+        log_level: log_level
       }.to_json
     end
 
-    it 'logs info messages' do
-      expect(logger).to receive(:info).with log_msg
-      described_class.info msg: 'my_message'
+    describe '#info' do
+      let(:log_level) { 'info' }
+      it 'logs info messages' do
+        expect(logger).to receive(:info).with log_msg
+        described_class.info msg: message
+      end
     end
 
-    it 'logs debug messages' do
-      expect(logger).to receive(:debug).with log_msg
-      described_class.debug msg: 'my_message'
+    describe '#debug' do
+      let(:log_level) { 'debug' }
+      it 'logs info messages' do
+        expect(logger).to receive(:debug).with log_msg
+        described_class.debug msg: message
+      end
     end
 
-    it 'logs warn messages' do
-      expect(logger).to receive(:warn).with log_msg
-      described_class.warn msg: 'my_message'
+    describe '#warn' do
+      let(:log_level) { 'warn' }
+      it 'logs info messages' do
+        expect(logger).to receive(:warn).with log_msg
+        described_class.warn msg: message
+      end
     end
 
-    it 'logs error messages' do
-      expect(logger).to receive(:error).with log_msg
-      described_class.error msg: 'my_message'
+    describe '#error' do
+      let(:log_level) { 'error' }
+      it 'logs error messages' do
+        expect(logger).to receive(:error).with log_msg
+        described_class.error msg: message
+      end
+    end
+
+    describe '#<<' do
+      let(:log_level) { 'info' }
+      it 'logs info message' do
+        expect(logger).to receive(:info).with log_msg
+        described_class << message
+      end
     end
   end
 
   describe 'with a block' do
     let(:start_log_msg) do
       {
-        msg: 'my_message',
-        log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
-        start_time: '2016-01-22 15:46:22 +1100 AEDT'
+        msg: message,
+        log_timestamp: timestamp,
+        log_level: log_level,
+        start_time: timestamp
       }.to_json
     end
     let(:end_log_msg) do
       {
-        msg: 'my_message',
-        log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
-        start_time: '2016-01-22 15:46:22 +1100 AEDT',
+        msg: message,
+        log_timestamp: timestamp,
+        log_level: log_level,
+        start_time: timestamp,
         end_time: '2016-01-22 15:46:32 +1100 AEDT',
         duration: 10.0
       }.to_json
@@ -110,7 +136,7 @@ RSpec.describe AmaysimLogger do
 
     context 'without exception' do
       after do
-        described_class.info(msg: 'my_message') { Timecop.freeze(end_time) }
+        described_class.info(msg: message) { Timecop.freeze(end_time) }
       end
 
       it 'logs the end time and duration' do
@@ -119,7 +145,7 @@ RSpec.describe AmaysimLogger do
 
       it 'returns the block return' do
         expect(
-          described_class.info(msg: 'my_message') { block_return_msg }
+          described_class.info(msg: message) { block_return_msg }
         ).to eq block_return_msg
       end
     end
@@ -127,18 +153,19 @@ RSpec.describe AmaysimLogger do
     context 'with exception' do
       let(:end_log_msg) do
         {
-          msg: 'my_message',
-          log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
-          start_time: '2016-01-22 15:46:22 +1100 AEDT',
-          exception: RuntimeError,
-          exception_msg: 'stinky things happen',
+          msg: message,
+          log_timestamp: timestamp,
+          log_level: log_level,
+          start_time: timestamp,
+          exception_class: 'RuntimeError',
+          exception_message: 'stinky things happen',
           end_time: '2016-01-22 15:46:32 +1100 AEDT',
           duration: 10.0
         }.to_json
       end
 
       let(:stinky_thing) do
-        described_class.info(msg: 'my_message') do
+        described_class.info(msg: message) do
           Timecop.freeze(end_time)
           raise 'stinky things happen'
         end
@@ -156,13 +183,23 @@ RSpec.describe AmaysimLogger do
         expect { stinky_thing }.to raise_error RuntimeError, 'stinky things happen'
       end
     end
+
+    context 'with no params' do
+      let(:message) { 'hello' }
+
+      it 'logs the block result for Rails.logger.info { block }' do
+        expect(logger).to receive(:info).with %({"msg":"#{message}","log_timestamp":"#{timestamp}","log_level":"info"})
+        described_class.info { message }
+      end
+    end
   end
 
   describe 'include specific params from the request' do
     let(:log_msg) do
       {
-        msg: 'my_message',
-        log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
+        msg: message,
+        log_timestamp: timestamp,
+        log_level: log_level,
         msn: 'log this',
         session_token: 'log this',
         request_id: 'log this',
@@ -172,6 +209,7 @@ RSpec.describe AmaysimLogger do
         phone_id: 'log this'
       }.to_json
     end
+
     before do
       [:msn, :session_token, :request_id, :ip, :endpoint,
        :client_id, :phone_id].each do |k|
@@ -181,7 +219,56 @@ RSpec.describe AmaysimLogger do
 
     it 'logs the specified parameters' do
       expect(logger).to receive(:info).with log_msg
-      described_class.info msg: 'my_message'
+      described_class.info msg: message
+    end
+  end
+
+  describe 'includes details from an exception' do
+    let(:msg) { 'unknown error' }
+    let(:exception_message) { 'An unexpected oops occurred' }
+    let(:exception) { Exception.new(exception_message) }
+    let(:exception_backtrace) { %w(a b) }
+    let(:exception_class) { exception.class.name }
+
+    before do
+      allow(exception).to receive(:backtrace).and_return(exception_backtrace)
+      allow(exception).to receive(:message).and_return(exception_message)
+    end
+
+    context 'with msg' do
+      let(:log_msg) do
+        {
+          msg: msg,
+          log_timestamp: timestamp,
+          log_level: 'error',
+          exception_class: exception_class,
+          exception_message: exception_message,
+          exception_backtrace: exception_backtrace.join('\n')
+        }.to_json
+      end
+
+      it 'logs error details for exceptions' do
+        expect(logger).to receive(:error).with(log_msg)
+        described_class.error msg: msg, exception: exception
+      end
+    end
+
+    context 'override null msg' do
+      let(:log_msg) do
+        {
+          msg: exception_message,
+          log_timestamp: timestamp,
+          log_level: 'error',
+          exception_class: exception_class,
+          exception_message: exception_message,
+          exception_backtrace: exception_backtrace.join('\n')
+        }.to_json
+      end
+
+      it 'logs error details for exceptions' do
+        expect(logger).to receive(:error).with(log_msg)
+        described_class.error exception: exception
+      end
     end
   end
 end
