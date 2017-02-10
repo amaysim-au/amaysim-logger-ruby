@@ -25,7 +25,7 @@ end
 ```
 
 3. Run `bundle install`
-4. In the application log as per usual wirh Rails.logger
+4. In the application log as per usual with Rails.logger
 
 ```
 
@@ -87,7 +87,7 @@ You automatically get logs for each request on each action:
   "endpoint": "http://amaysim.com.au/",
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:37:59 +1100 AEDT",
-  "msg": "log_request",
+  "msg": "controller request",
   "log_level": "info",
   "request_id": "04780cc0-fead-448d-907a-381089eb221b",
   "start_time": "2017-02-01 12:37:59 +1100 AEDT",
@@ -145,7 +145,7 @@ Then you will have log entries like this:
   "foo": "bar",
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:47:08 +1100 AEDT",
-  "msg": "log_request",
+  "msg": "controller request",
   "log_level": "info",
   "request_id": "6a2a792b-4a96-4179-adf2-106c1028df7c",
   "start_time": "2017-02-01 12:47:08 +1100 AEDT",
@@ -158,7 +158,7 @@ Then you will have log entries like this:
   "endpoint": "http://amaysim.com.au/",
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:47:08 +1100 AEDT",
-  "msg": "log_request",
+  "msg": "controller request",
   "log_level": "info",
   "request_id": "6a2a792b-4a96-4179-adf2-106c1028df7c",
   "start_time": "2017-02-01 12:47:08 +1100 AEDT",
@@ -169,13 +169,13 @@ Then you will have log entries like this:
 From the log we can see:   
 
 * We automatically have request logs.
-* You can explicitly call `log_request` anytime during any controller action yourself.
+* You can explicitly call `controller request` anytime during any controller action yourself.
 * The logs automatically include some request metadata like ip, user agent, endpoint etc.
 
 ### Configuration
 
 By default the ActiveRecord, ActiveJob, ActionController and ActionView logs are
-disabled. These can be reenabled in an initailizer.
+disabled. These can be re-enabled in an initializer.
 
 ```
 # /config/initializers/amaysim_logger.rb
