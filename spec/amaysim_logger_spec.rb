@@ -14,9 +14,7 @@ RSpec.describe AmaysimLogger do
   let(:multiple_lines_message) do
     <<-XML
 <root>
-  <element>first line</element>
-  <element>second line</element>
-  <element>thrid line</element>
+<element>first line</element>
 </root>
     XML
   end
@@ -26,17 +24,37 @@ RSpec.describe AmaysimLogger do
   end
 
   describe 'info, debug, warn, error, unknown' do
-    it 'works with a non hash input as an argument as well' do
-      expected = %({"msg":"#{message}","log_timestamp":"#{timestamp}","log_level":"unknown"})
-      expect(logger).to receive(:unknown).with(expected)
-      described_class.unknown(message)
+    context 'non hash input' do
+      let(:expected) do
+        %({"msg":"#{message}","log_timestamp":"#{timestamp}","log_level":"unknown"})
+      end
+
+      it 'logs non hash input' do
+        expect(logger).to receive(:unknown).with(expected)
+        described_class.unknown(message)
+      end
     end
 
-    it 'works with a multiple lines string' do
-      # rubocop:disable Metrics/LineLength
-      expected = '{"msg":"\u003croot\u003e\n  \u003celement\u003efirst line\u003c/element\u003e\n  \u003celement\u003esecond line\u003c/element\u003e\n  \u003celement\u003ethrid line\u003c/element\u003e\n\u003c/root\u003e\n","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"warn"}'
-      expect(logger).to receive(:warn).with(expected)
-      described_class.warn(multiple_lines_message)
+    context 'multi line' do
+      let(:expected) do
+        # rubocop:disable Metrics/LineLength
+        '{"msg":"\u003croot\u003e\n\u003celement\u003efirst line\u003c/element\u003e\n\u003c/root\u003e","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"warn"}'
+      end
+
+      it 'logs a multiple lines string' do
+        expect(logger).to receive(:warn).with(expected)
+        described_class.warn(multiple_lines_message)
+      end
+    end
+
+    context 'trims white space' do
+      let(:message) { "  b y \n\n   " }
+      let(:expected) { %({"msg":"b y","log_timestamp":"#{timestamp}","log_level":"info"}) }
+
+      it 'trims white space in log entries' do
+        expect(logger).to receive(:info).with(expected)
+        described_class.info(message)
+      end
     end
   end
 
@@ -189,6 +207,16 @@ RSpec.describe AmaysimLogger do
 
       it 'logs the block result for Rails.logger.info { block }' do
         expect(logger).to receive(:info).with %({"msg":"#{message}","log_timestamp":"#{timestamp}","log_level":"info"})
+        described_class.info { message }
+      end
+    end
+
+    context 'trims white space' do
+      let(:message) { "  b y \n\n " }
+      let(:expected) { 'b y' }
+
+      it 'trims and logs the block result for Rails.logger.info { block }' do
+        expect(logger).to receive(:info).with %({"msg":"#{expected}","log_timestamp":"#{timestamp}","log_level":"info"})
         described_class.info { message }
       end
     end

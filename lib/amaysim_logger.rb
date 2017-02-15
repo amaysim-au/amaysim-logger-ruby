@@ -58,6 +58,7 @@ class AmaysimLogger
     def log(log_msg, log_level, execute)
       log_params = prepare_log_params(log_msg, log_level)
       log_with = ->(log_content) { logger.send(log_level, log_content) }
+
       if log_msg.nil? && execute
         log_params[:msg] = execute.call
         log_with.call(format_params(log_params))
@@ -116,6 +117,7 @@ class AmaysimLogger
     end
 
     def format_params(params)
+      params[:msg] = params[:msg].to_s.strip if params.key?(:msg)
       params.to_json
     end
   end
