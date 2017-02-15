@@ -33,7 +33,7 @@ class AmaysimLogger
         # rubocop:disable RSpec/ExampleLength
         it 'logs the http request with a generated correlation id' do
           log = {
-            msg: 'controller request',
+            msg: 'Web request',
             log_timestamp: start_time,
             log_level: 'debug',
             request_id: 'uuid',
@@ -60,7 +60,7 @@ class AmaysimLogger
 
         it 'logs the http request with the provided correlation id' do
           log = {
-            msg: 'controller request',
+            msg: 'Web request',
             log_timestamp: start_time,
             log_level: 'debug',
             request_id: 'uuid',

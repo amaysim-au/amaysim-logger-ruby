@@ -87,7 +87,7 @@ You automatically get logs for each request on each action:
   "endpoint": "http://amaysim.com.au/",
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:37:59 +1100 AEDT",
-  "msg": "controller request",
+  "msg": "Web request",
   "log_level": "info",
   "request_id": "04780cc0-fead-448d-907a-381089eb221b",
   "start_time": "2017-02-01 12:37:59 +1100 AEDT",
@@ -145,7 +145,7 @@ Then you will have log entries like this:
   "foo": "bar",
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:47:08 +1100 AEDT",
-  "msg": "controller request",
+  "msg": "Web request",
   "log_level": "info",
   "request_id": "6a2a792b-4a96-4179-adf2-106c1028df7c",
   "start_time": "2017-02-01 12:47:08 +1100 AEDT",
@@ -158,7 +158,7 @@ Then you will have log entries like this:
   "endpoint": "http://amaysim.com.au/",
   "ip": "::1",
   "log_timestamp": "2017-02-01 12:47:08 +1100 AEDT",
-  "msg": "controller request",
+  "msg": "Web request",
   "log_level": "info",
   "request_id": "6a2a792b-4a96-4179-adf2-106c1028df7c",
   "start_time": "2017-02-01 12:47:08 +1100 AEDT",
@@ -171,6 +171,16 @@ From the log we can see:
 * We automatically have request logs.
 * You can explicitly call `controller request` anytime during any controller action yourself.
 * The logs automatically include some request metadata like ip, user agent, endpoint etc.
+
+### Common log entries for all controllers
+
+To add common log params across all controllers then
+Add something like this to an intialiser
+```
+  ActiveSupport.on_load(:action_controller) do
+    AmaysimLogger.add_to_log_context(app: 'your app name', foo: 'foo')
+  end
+```
 
 ### Configuration
 
