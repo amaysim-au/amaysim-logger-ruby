@@ -4,9 +4,16 @@ require 'json'
 require 'active_support/core_ext/time/conversions'
 require 'active_support/core_ext/time/zones'
 require 'request_store'
+require 'amaysim_logger/keyword_filter'
 
 class AmaysimLogger
   class << self
+    def filtered_keywords
+      @filtered_keywords ||= []
+    end
+
+    attr_writer :filtered_keywords
+
     def info(msg = nil, _progname = nil)
       log(msg, :info, block_given? ? -> { yield } : nil)
     end
@@ -70,8 +77,9 @@ class AmaysimLogger
     end
 
     def prepare_log_params(log_msg, log_level)
-      return create_hash_log_params(log_msg, log_level) if log_msg.is_a?(Hash)
-      create_log_params(log_msg.to_s, {}, log_level)
+      filtered_log_msg = KeywordFilter.filter(log_msg, filtered_keywords)
+      return create_hash_log_params(filtered_log_msg, log_level) if log_msg.is_a?(Hash)
+      create_log_params(filtered_log_msg.to_s, {}, log_level)
     end
 
     def create_hash_log_params(log_msg, log_level)
