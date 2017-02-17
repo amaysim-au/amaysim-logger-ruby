@@ -56,6 +56,30 @@ RSpec.describe AmaysimLogger do
         described_class.info(message)
       end
     end
+
+    context 'masks keyword' do
+      before do
+        described_class.filtered_keywords = %w(password)
+      end
+
+      it 'masks the filtered keywords for a hash log message' do
+        expected = '{"msg":"","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info","password":"[MASKED]","foo":"bar"}'
+        expect(logger).to receive(:info).with(expected)
+        described_class.info(password: '1234', foo: 'bar')
+      end
+
+      it 'masks the filtered keywords for a string json message' do
+        expected = '{"msg":"{\"password\":\"[MASKED]\",\"foo\":\"bar\"}","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info"}'
+        expect(logger).to receive(:info).with(expected)
+        described_class.info('{ "password" : "1234", "foo" : "bar" }')
+      end
+
+      it 'masks the filtered keywords for a string xml message' do
+        expected = '{"msg":"\u003cpassword\u003e[MASKED]\u003c/password\u003e","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info"}'
+        expect(logger).to receive(:info).with(expected)
+        described_class.info('<Password>abc</Password>')
+      end
+    end
   end
 
   describe '.add_to_log_context' do

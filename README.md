@@ -74,6 +74,19 @@ Rails.logger.warn(msg: 'baz', other: :attribute) { sleep 1.45 }
 # }
 ```
 
+## Keyword Filtering
+Keyword filtering is straightforward.
+
+```
+AmaysimLogger.filtered_keywords = %w( password email first_name )
+
+AmaysimLogger.info(password: 'foo', key: 'value')
+# {"password":"[MASKED]","key":"value"}
+
+AmaysimLogger.debug(soap_response)
+# ..... <email>[MASKED]</email> ......
+```
+
 ## Rails
 It should Just Work:tm:.
 
