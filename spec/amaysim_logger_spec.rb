@@ -1,7 +1,6 @@
 require 'active_support'
 require 'timecop'
 require 'request_store'
-
 # rubocop:disable RSpec/MessageSpies
 RSpec.describe AmaysimLogger do
   let(:timestamp) { '2016-01-22 15:46:22 +1100 AEDT' }
@@ -36,8 +35,8 @@ RSpec.describe AmaysimLogger do
     end
 
     context 'multi line' do
+      # rubocop:disable Metrics/LineLength
       let(:expected) do
-        # rubocop:disable Metrics/LineLength
         {
           msg: "<root>\n<element>first line</element>\n</root>",
           log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
@@ -88,6 +87,12 @@ RSpec.describe AmaysimLogger do
         expected = '{"msg":"\\u003cpassword\\u003e[MASKED]\\u003c/password\\u003e","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info"}'
         expect(logger).to receive(:info).with(expected)
         described_class.info { '<Password>abc</Password>' }
+      end
+
+      it 'masks a nested hash' do
+        expected = '{"msg":{"password":"[MASKED]","foo":"bar"},"log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info"}'
+        expect(logger).to receive(:info).with(expected)
+        described_class.info(msg: { password: :blah, foo: :bar })
       end
     end
   end

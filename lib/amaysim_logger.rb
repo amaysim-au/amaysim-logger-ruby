@@ -6,6 +6,7 @@ require 'active_support/core_ext/time/zones'
 require 'request_store'
 require 'amaysim_logger/keyword_filter'
 
+# rubocop:disable Metrics/ClassLength
 class AmaysimLogger
   class << self
     def filtered_keywords
@@ -79,7 +80,7 @@ class AmaysimLogger
     def prepare_log_params(log_msg, log_level)
       filtered_log_msg = KeywordFilter.filter(log_msg, filtered_keywords)
       return create_hash_log_params(filtered_log_msg, log_level) if log_msg.is_a?(Hash)
-      create_log_params(filtered_log_msg.to_s, {}, log_level)
+      create_log_params(filtered_log_msg, {}, log_level)
     end
 
     def create_hash_log_params(log_msg, log_level)
@@ -124,10 +125,13 @@ class AmaysimLogger
       log_params[:exception_message] = e.message
     end
 
-    def format_params(params)
-      params[:msg] = params[:msg].to_s.strip if params.key?(:msg)
+    def format_params(params, convert_to_string = true)
+      if params.key?(:msg)
+        msg = params[:msg]
+        params[:msg] = msg.is_a?(Hash) ? format_params(msg, false) : params[:msg].to_s.strip
+      end
       filtered_params = KeywordFilter.filter(params, filtered_keywords)
-      filtered_params.to_json
+      convert_to_string ? filtered_params.to_json : filtered_params
     end
   end
 end

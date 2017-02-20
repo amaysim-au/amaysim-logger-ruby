@@ -13,14 +13,18 @@ class AmaysimLogger
 
       private
 
+      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize
       def filter_hash(content, filtered_keywords)
         result = content.clone
         result.keys.each do |key|
           val = result[key]
           if to_lower_case(filtered_keywords).include?(key.to_s.downcase)
             result[key] = MASK
-          elsif val.is_a?(String)
-            result[key] = filter_xml(val, filtered_keywords)
+          elsif val.is_a?(Hash)
+            result[key] = filter_hash(val, filtered_keywords)
+          elsif val.is_a?(String) || val.is_a?(Symbol)
+            result[key] = filter_xml(val.to_s, filtered_keywords)
           end
         end
         result
