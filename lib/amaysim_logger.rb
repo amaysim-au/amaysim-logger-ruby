@@ -126,7 +126,8 @@ class AmaysimLogger
 
     def format_params(params)
       params[:msg] = params[:msg].to_s.strip if params.key?(:msg)
-      params.to_json
+      filtered_params = KeywordFilter.filter(params, filtered_keywords)
+      filtered_params.to_json
     end
   end
 end

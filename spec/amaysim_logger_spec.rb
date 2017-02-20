@@ -83,6 +83,12 @@ RSpec.describe AmaysimLogger do
         expect(logger).to receive(:info).with(expected)
         described_class.info('<Password>abc</Password>')
       end
+
+      it 'masks a block result' do
+        expected = '{"msg":"\\u003cpassword\\u003e[MASKED]\\u003c/password\\u003e","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info"}'
+        expect(logger).to receive(:info).with(expected)
+        described_class.info { '<Password>abc</Password>' }
+      end
     end
   end
 
