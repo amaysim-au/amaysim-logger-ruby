@@ -1,5 +1,6 @@
 require 'bundler/setup'
 Bundler.setup
+require 'byebug'
 
 require 'simplecov'
 SimpleCov.start do

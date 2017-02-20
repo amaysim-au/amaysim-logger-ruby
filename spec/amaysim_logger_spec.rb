@@ -38,7 +38,11 @@ RSpec.describe AmaysimLogger do
     context 'multi line' do
       let(:expected) do
         # rubocop:disable Metrics/LineLength
-        '{"msg":"\u003croot\u003e\n\u003celement\u003efirst line\u003c/element\u003e\n\u003c/root\u003e","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"warn"}'
+        {
+          msg: "<root>\n<element>first line</element>\n</root>",
+          log_timestamp: '2016-01-22 15:46:22 +1100 AEDT',
+          log_level: 'warn'
+        }.to_json
       end
 
       it 'logs a multiple lines string' do
@@ -75,7 +79,7 @@ RSpec.describe AmaysimLogger do
       end
 
       it 'masks the filtered keywords for a string xml message' do
-        expected = '{"msg":"\u003cpassword\u003e[MASKED]\u003c/password\u003e","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info"}'
+        expected = '{"msg":"\\u003cpassword\\u003e[MASKED]\\u003c/password\\u003e","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info"}'
         expect(logger).to receive(:info).with(expected)
         described_class.info('<Password>abc</Password>')
       end
