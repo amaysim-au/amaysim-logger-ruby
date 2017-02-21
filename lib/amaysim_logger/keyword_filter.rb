@@ -21,8 +21,8 @@ class AmaysimLogger
             result[key] = MASK
           elsif val.is_a?(Hash)
             result[key] = filter_hash(val, filtered_keywords)
-          elsif val.is_a?(String) || val.is_a?(Symbol)
-            result[key] = filter_xml(val.to_s, filtered_keywords)
+          elsif val.is_a?(String)
+            result[key] = filter_xml(val, filtered_keywords)
           end
         end
         result
