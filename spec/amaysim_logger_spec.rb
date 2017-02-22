@@ -94,6 +94,14 @@ RSpec.describe AmaysimLogger do
         expect(logger).to receive(:info).with(expected)
         described_class.info(msg: { password: :blah, foo: :bar })
       end
+
+      it 'masks nested array of hashes' do
+        expected = '{"msg":"","log_timestamp":"2016-01-22 15:46:22 +1100 AEDT","log_level":"info","data":[{"password":"[MASKED]","foo":"bar"},{"password":"[MASKED]","bar":"baz"}]}'
+        expect(logger).to receive(:info).with(expected)
+        described_class.info(
+          data: [{ password: :blah, foo: :bar }, { password: :blah, bar: :baz }]
+        )
+      end
     end
   end
 
