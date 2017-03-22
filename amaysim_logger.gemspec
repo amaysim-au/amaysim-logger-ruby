@@ -40,4 +40,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rubocop', '~> 0.46'
   gem.add_development_dependency 'rubocop-rspec', '~> 1.9'
   gem.add_development_dependency 'codeclimate-test-reporter', '~> 1.0'
+  gem.add_development_dependency 'tzinfo-data', '~> 1.2017'
 end

@@ -3,6 +3,6 @@ source "https://rubygems.org"
 
 gemspec
 
-group :development do
+group :development, :test do
   gem 'byebug'
 end

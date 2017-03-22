@@ -1,0 +1,8 @@
+version: "2.0"
+services:
+  test:
+    image: "amaysim/ruby-builder:2.3-stub"
+    volumes:
+      - ".:/app"
+    working_dir: "/app"
+    command: "sh ci.sh"
