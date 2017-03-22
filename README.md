@@ -208,3 +208,16 @@ Please ensure the correlation id is passed to downstream systems so we can link 
 Header key: "Correlation-ID"
 Header value: eg. "568652a8-2d54-4540-940d-ca48836ec70f"
 ```
+
+## Running tests
+
+* locally:
+```
+bundle install
+bundle exec rake
+```
+
+* with docker:
+```
+docker-compose run test
+```

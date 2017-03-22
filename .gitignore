@@ -8,9 +8,6 @@
 # Test coverage report
 coverage
 
-# Dependencies version tolerance
-Gemfile.lock
-
 # Ignore Byebug command history file.
 .byebug_history
 
