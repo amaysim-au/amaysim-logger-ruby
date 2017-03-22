@@ -95,6 +95,8 @@ GEM
     timecop (0.8.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2017.1)
+      tzinfo (>= 1.0.0)
     unicode-display_width (1.1.3)
 
 PLATFORMS
@@ -114,6 +116,7 @@ DEPENDENCIES
   rubocop-rspec (~> 1.9)
   simplecov (~> 0.12)
   timecop (~> 0.8)
+  tzinfo-data (~> 1.2017)
 
 BUNDLED WITH
    1.14.6
