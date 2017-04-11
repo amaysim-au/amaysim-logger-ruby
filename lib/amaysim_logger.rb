@@ -130,7 +130,7 @@ class AmaysimLogger
         msg = params[:msg]
         params[:msg] = msg.is_a?(Hash) ? format_params(msg, false) : params[:msg].to_s.strip
       end
-      filtered_params = KeywordFilter.filter(params, filtered_keywords)
+      filtered_params = KeywordFilter.filter(log_context.merge(params), filtered_keywords)
       convert_to_string ? filtered_params.to_json : filtered_params
     end
   end
