@@ -88,7 +88,7 @@ class AmaysimLogger
         e = log_msg[:exception]
         log_msg.delete(:exception)
         log_exception(e, log_msg)
-        log_msg[:exception_backtrace] = e.backtrace.join('\n')
+        log_msg[:exception_backtrace] = e.backtrace
       end
 
       create_log_params(log_msg.delete(:msg), log_msg, log_level)
