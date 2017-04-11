@@ -272,16 +272,16 @@ RSpec.describe AmaysimLogger do
   describe 'include specific params from the request' do
     let(:log_msg) do
       {
-        msg: message,
-        log_timestamp: timestamp,
-        log_level: log_level,
         msn: 'log this',
         session_token: 'log this',
         request_id: 'log this',
         ip: 'log this',
         endpoint: 'log this',
         client_id: 'log this',
-        phone_id: 'log this'
+        phone_id: 'log this',
+        msg: message,
+        log_timestamp: timestamp,
+        log_level: log_level
       }.to_json
     end
 
@@ -318,7 +318,7 @@ RSpec.describe AmaysimLogger do
           log_level: 'error',
           exception_class: exception_class,
           exception_message: exception_message,
-          exception_backtrace: exception_backtrace.join('\n')
+          exception_backtrace: exception_backtrace
         }.to_json
       end
 
@@ -336,7 +336,7 @@ RSpec.describe AmaysimLogger do
           log_level: 'error',
           exception_class: exception_class,
           exception_message: exception_message,
-          exception_backtrace: exception_backtrace.join('\n')
+          exception_backtrace: exception_backtrace
         }.to_json
       end
 

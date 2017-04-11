@@ -22,7 +22,7 @@ class AmaysimLogger
           elsif val.is_a?(Hash)
             result[key] = filter_hash(val, filtered_keywords)
           elsif val.is_a?(Array)
-            result[key] = val.map { |entry| filter_hash(entry, filtered_keywords) }
+            result[key] = val.map { |entry| filter(entry, filtered_keywords) }
           elsif val.is_a?(String)
             result[key] = filter_xml(val, filtered_keywords)
           end
