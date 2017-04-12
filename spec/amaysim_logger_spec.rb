@@ -224,17 +224,24 @@ RSpec.describe AmaysimLogger do
           start_time: timestamp,
           exception_class: 'RuntimeError',
           exception_message: 'stinky things happen',
+          exception_backtrace: ['backtrace'],
           end_time: '2016-01-22 15:46:32 +1100 AEDT',
           duration: 10.0
         }.to_json
       end
 
+      let(:exception) do
+        RuntimeError.new('stinky things happen')
+      end
+
       let(:stinky_thing) do
         described_class.info(msg: message) do
           Timecop.freeze(end_time)
-          raise 'stinky things happen'
+          raise exception
         end
       end
+
+      before { allow(exception).to receive(:backtrace) { ['backtrace'] } }
 
       it 'logs end_log_msg on exception' do
         expect(logger).to receive(:info).with end_log_msg
