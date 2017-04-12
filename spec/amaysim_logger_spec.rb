@@ -224,17 +224,24 @@ RSpec.describe AmaysimLogger do
           start_time: timestamp,
           exception_class: 'RuntimeError',
           exception_message: 'stinky things happen',
+          exception_backtrace: ['backtrace'],
           end_time: '2016-01-22 15:46:32 +1100 AEDT',
           duration: 10.0
         }.to_json
       end
 
+      let(:exception) do
+        RuntimeError.new('stinky things happen')
+      end
+
       let(:stinky_thing) do
         described_class.info(msg: message) do
           Timecop.freeze(end_time)
-          raise 'stinky things happen'
+          raise exception
         end
       end
+
+      before { allow(exception).to receive(:backtrace) { ['backtrace'] } }
 
       it 'logs end_log_msg on exception' do
         expect(logger).to receive(:info).with end_log_msg
@@ -272,16 +279,16 @@ RSpec.describe AmaysimLogger do
   describe 'include specific params from the request' do
     let(:log_msg) do
       {
-        msg: message,
-        log_timestamp: timestamp,
-        log_level: log_level,
         msn: 'log this',
         session_token: 'log this',
         request_id: 'log this',
         ip: 'log this',
         endpoint: 'log this',
         client_id: 'log this',
-        phone_id: 'log this'
+        phone_id: 'log this',
+        msg: message,
+        log_timestamp: timestamp,
+        log_level: log_level
       }.to_json
     end
 
@@ -318,7 +325,7 @@ RSpec.describe AmaysimLogger do
           log_level: 'error',
           exception_class: exception_class,
           exception_message: exception_message,
-          exception_backtrace: exception_backtrace.join('\n')
+          exception_backtrace: exception_backtrace
         }.to_json
       end
 
@@ -336,7 +343,7 @@ RSpec.describe AmaysimLogger do
           log_level: 'error',
           exception_class: exception_class,
           exception_message: exception_message,
-          exception_backtrace: exception_backtrace.join('\n')
+          exception_backtrace: exception_backtrace
         }.to_json
       end
 

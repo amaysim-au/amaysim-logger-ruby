@@ -1,9 +1,9 @@
+require 'json'
+require 'request_store'
 require 'active_support/logger'
 require 'active_support/core_ext/module/delegation'
-require 'json'
 require 'active_support/core_ext/time/conversions'
 require 'active_support/core_ext/time/zones'
-require 'request_store'
 require 'amaysim_logger/keyword_filter'
 
 # rubocop:disable Metrics/ClassLength
@@ -88,7 +88,6 @@ class AmaysimLogger
         e = log_msg[:exception]
         log_msg.delete(:exception)
         log_exception(e, log_msg)
-        log_msg[:exception_backtrace] = e.backtrace.join('\n')
       end
 
       create_log_params(log_msg.delete(:msg), log_msg, log_level)
@@ -123,6 +122,7 @@ class AmaysimLogger
       log_params[:msg] = e.message unless log_params.key?(:msg)
       log_params[:exception_class] = e.class.name
       log_params[:exception_message] = e.message
+      log_params[:exception_backtrace] = e.backtrace.first(20)
     end
 
     def format_params(params, convert_to_string = true)
@@ -130,7 +130,7 @@ class AmaysimLogger
         msg = params[:msg]
         params[:msg] = msg.is_a?(Hash) ? format_params(msg, false) : params[:msg].to_s.strip
       end
-      filtered_params = KeywordFilter.filter(params, filtered_keywords)
+      filtered_params = KeywordFilter.filter(log_context.merge(params), filtered_keywords)
       convert_to_string ? filtered_params.to_json : filtered_params
     end
   end

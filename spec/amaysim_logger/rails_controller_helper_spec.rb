@@ -1,5 +1,6 @@
 require 'amaysim_logger/rails_controller_helper'
 require 'action_controller'
+require 'timecop'
 
 # rubocop:disable RSpec/MessageSpies
 # rubocop:disable RSpec/VerifiedDoubles
@@ -26,21 +27,17 @@ class AmaysimLogger
 
     describe '#log_request' do
       context 'when correlation-id not provided by HTTP header' do
-        before do
-          allow(SecureRandom).to receive(:uuid).and_return('generated-uuid')
-        end
-
         # rubocop:disable RSpec/ExampleLength
         it 'logs the http request with a generated correlation id' do
           log = {
-            msg: 'Web request',
-            log_timestamp: start_time,
-            log_level: 'debug',
             request_id: 'uuid',
             ip: '1.2.3.4',
             user_agent: 'Chrome',
             endpoint: 'http://amaysim.com.au',
-            correlation_id: 'generated-uuid',
+            correlation_id: 'uuid',
+            msg: 'Web request',
+            log_timestamp: start_time,
+            log_level: 'debug',
             start_time: start_time,
             end_time: end_time,
             duration: 10.0
@@ -60,14 +57,14 @@ class AmaysimLogger
 
         it 'logs the http request with the provided correlation id' do
           log = {
-            msg: 'Web request',
-            log_timestamp: start_time,
-            log_level: 'debug',
             request_id: 'uuid',
             ip: '1.2.3.4',
             user_agent: 'Chrome',
             endpoint: 'http://amaysim.com.au',
             correlation_id: 'provided-uuid',
+            msg: 'Web request',
+            log_timestamp: start_time,
+            log_level: 'debug',
             start_time: start_time,
             end_time: end_time,
             duration: 10.0

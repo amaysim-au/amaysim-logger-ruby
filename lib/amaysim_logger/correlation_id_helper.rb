@@ -6,13 +6,7 @@ class AmaysimLogger
     extend ActiveSupport::Concern
 
     def correlation_id
-      @correlation_id ||= request.headers['CORRELATION-ID'] || new_correlation_id
-    end
-
-    private
-
-    def new_correlation_id
-      SecureRandom.uuid
+      @correlation_id ||= request.headers['CORRELATION-ID'] || request.uuid
     end
   end
 end
