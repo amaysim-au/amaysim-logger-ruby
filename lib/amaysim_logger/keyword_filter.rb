@@ -31,7 +31,7 @@ class AmaysimLogger
       def filter_json(content, filtered_keywords)
         return content unless content.is_a?(String)
         json = JSON.parse(content)
-        filter_hash(json, filtered_keywords).to_json
+        filter_hash(json, filtered_keywords).to_json if content.respond_to?(:keys)
       rescue
         content
       end
