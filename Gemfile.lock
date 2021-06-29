@@ -37,7 +37,7 @@ GEM
     docile (1.1.5)
     erubis (2.7.0)
     i18n (0.7.0)
-    json (2.0.3)
+    json (2.5.1)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     method_source (0.8.2)
