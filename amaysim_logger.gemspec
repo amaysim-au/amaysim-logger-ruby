@@ -37,7 +37,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rack-test', '~> 0.6'
   gem.add_development_dependency 'simplecov', '~> 0.12'
   gem.add_development_dependency 'pry', '~> 0.10'
-  gem.add_development_dependency 'rubocop', '~> 0.46'
+  gem.add_development_dependency 'rubocop', '~> 1.50'
   gem.add_development_dependency 'rubocop-rspec', '~> 1.9'
   gem.add_development_dependency 'codeclimate-test-reporter', '~> 1.0'
   gem.add_development_dependency 'tzinfo-data', '~> 1.2017'
